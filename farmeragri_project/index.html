@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Connect Ecosystem</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        * {
+            font-family: 'Nunito', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c23 50%, #6b8e23 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(45, 80, 22, 0.2);
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left: 4px solid #fbbf24;
+        }
+        .input-field {
+            transition: all 0.2s ease;
+        }
+        .input-field:focus {
+            border-color: #4a7c23;
+            box-shadow: 0 0 0 3px rgba(74, 124, 35, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4a7c23 0%, #2d5016 100%);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(45, 80, 22, 0.4);
+        }
+        .toast {
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .modal-overlay {
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-stone-100">
+  <div id="app" class="h-full flex overflow-auto"><!-- Sidebar Navigation -->
+   <aside id="sidebar" class="gradient-bg w-64 flex-shrink-0 flex flex-col text-white">
+    <div class="p-6 border-b border-white/20">
+     <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-amber-400 rounded-xl flex items-center justify-center">
+       <svg class="w-7 h-7 text-green-900" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+       </svg>
+      </div>
+      <div>
+       <h1 id="platform-title" class="font-bold text-lg leading-tight">Farmer Connect</h1>
+       <p class="text-xs text-white/70">Ecosystem Platform</p>
+      </div>
+     </div>
+    </div>
+    <nav class="flex-1 py-4">
+     <div class="px-4 mb-2 text-xs font-semibold text-white/50 uppercase tracking-wider">
+      Main Menu
+     </div><button onclick="showSection('dashboard')" class="nav-item active w-full flex items-center gap-3 px-6 py-3 text-left" data-section="dashboard">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg> Dashboard </button> <button onclick="showSection('vendors')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-left" data-section="vendors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg> Vendors &amp; Resources </button> <button onclick="showSection('machinery')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-left" data-section="machinery">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg> Machinery Leasing </button> <button onclick="showSection('credit')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-left" data-section="credit">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg> Agri Credit </button> <button onclick="showSection('produce')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-left" data-section="produce">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg> Sell Produce </button> <button onclick="showSection('advice')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-left" data-section="advice">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg> Expert Advice </button>
+     <div class="px-4 mt-6 mb-2 text-xs font-semibold text-white/50 uppercase tracking-wider">
+      My Records
+     </div><button onclick="showSection('my-requests')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-left" data-section="my-requests">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+      </svg> My Requests </button>
+    </nav>
+    <div class="p-4 border-t border-white/20">
+     <div class="bg-white/10 rounded-xl p-4">
+      <div class="flex items-center gap-3 mb-3">
+       <div class="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center text-green-900 font-bold">
+        🌾
+       </div>
+       <div>
+        <p class="font-semibold text-sm">Farmer Portal</p>
+        <p class="text-xs text-white/70">Connected Ecosystem</p>
+       </div>
+      </div>
+      <p class="text-xs text-white/60">Empowering farmers with digital solutions</p>
+     </div>
+    </div>
+   </aside><!-- Main Content Area -->
+   <main class="flex-1 overflow-auto"><!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+     <div class="flex items-center justify-between px-8 py-4">
+      <div>
+       <h2 id="section-title" class="text-xl font-bold text-gray-800">Dashboard</h2>
+       <p id="welcome-text" class="text-sm text-gray-500">Welcome to Farmer Connect Ecosystem</p>
+      </div>
+      <div class="flex items-center gap-4">
+       <div class="flex items-center gap-2 text-sm text-gray-600"><span class="pulse-dot w-2 h-2 bg-green-500 rounded-full"></span> <span>System Online</span>
+       </div>
+       <div class="w-10 h-10 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center text-white font-bold">
+        👨‍🌾
+       </div>
+      </div>
+     </div>
+    </header><!-- Content Sections -->
+    <div class="p-8"><!-- Dashboard Section -->
+     <section id="dashboard-section" class="section-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+       <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border-l-4 border-green-500">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center"><span class="text-2xl">🏪</span>
+         </div><span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">12</h3>
+        <p class="text-sm text-gray-500">Local Vendors</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border-l-4 border-blue-500">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center"><span class="text-2xl">🚜</span>
+         </div><span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Available</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">8</h3>
+        <p class="text-sm text-gray-500">Machinery Units</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border-l-4 border-amber-500">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center"><span class="text-2xl">💰</span>
+         </div><span class="text-xs font-semibold text-amber-600 bg-amber-100 px-2 py-1 rounded-full">Open</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">₹5L</h3>
+        <p class="text-sm text-gray-500">Max Credit Limit</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border-l-4 border-purple-500">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center"><span class="text-2xl">🏛️</span>
+         </div><span class="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-1 rounded-full">Nearby</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">5</h3>
+        <p class="text-sm text-gray-500">Mandis Connected</p>
+       </div>
+      </div><!-- Seasonal Crop Suggestions -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+       <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><span class="text-xl">🌱</span>
+        </div>
+        <div>
+         <h3 class="font-bold text-gray-800">AI Crop Suggestions</h3>
+         <p class="text-sm text-gray-500">Based on current season</p>
+        </div>
+       </div>
+       <div id="crop-suggestions" class="grid grid-cols-2 md:grid-cols-4 gap-4"><!-- Populated by JS -->
+       </div>
+      </div><!-- Quick Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><button onclick="showSection('machinery')" class="card-hover bg-gradient-to-br from-green-500 to-green-700 rounded-2xl p-6 text-white text-left">
+        <div class="text-3xl mb-4">
+         🚜
+        </div><h3 class="font-bold text-lg mb-2">Lease Machinery</h3><p class="text-sm text-white/80">Rent tractors, harvesters &amp; more</p></button> <button onclick="showSection('credit')" class="card-hover bg-gradient-to-br from-amber-500 to-amber-700 rounded-2xl p-6 text-white text-left">
+        <div class="text-3xl mb-4">
+         💳
+        </div><h3 class="font-bold text-lg mb-2">Apply for Credit</h3><p class="text-sm text-white/80">Get agricultural loans easily</p></button> <button onclick="showSection('produce')" class="card-hover bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-6 text-white text-left">
+        <div class="text-3xl mb-4">
+         🌾
+        </div><h3 class="font-bold text-lg mb-2">Sell Your Produce</h3><p class="text-sm text-white/80">Direct access to mandis</p></button>
+      </div>
+     </section><!-- Vendors Section -->
+     <section id="vendors-section" class="section-content hidden">
+      <div class="mb-6">
+       <div class="flex flex-wrap gap-2"><button onclick="filterVendors('all')" class="vendor-filter active px-4 py-2 rounded-full text-sm font-semibold bg-green-600 text-white">All Vendors</button> <button onclick="filterVendors('seeds')" class="vendor-filter px-4 py-2 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300">🌱 Seeds</button> <button onclick="filterVendors('fertilizers')" class="vendor-filter px-4 py-2 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300">🧪 Fertilizers</button> <button onclick="filterVendors('pesticides')" class="vendor-filter px-4 py-2 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300">🐛 Pesticides</button>
+       </div>
+      </div>
+      <div id="vendors-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Populated by JS -->
+      </div>
+     </section><!-- Machinery Section -->
+     <section id="machinery-section" class="section-content hidden">
+      <div id="machinery-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"><!-- Populated by JS -->
+      </div>
+     </section><!-- Credit Section -->
+     <section id="credit-section" class="section-content hidden">
+      <div class="max-w-2xl mx-auto">
+       <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex items-center gap-4 mb-6">
+         <div class="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center"><span class="text-3xl">💰</span>
+         </div>
+         <div>
+          <h3 class="font-bold text-xl text-gray-800">Apply for Agri Credit</h3>
+          <p class="text-sm text-gray-500">Get loans up to ₹5,00,000</p>
+         </div>
+        </div>
+        <form id="credit-form" class="space-y-6">
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label> <input type="text" id="credit-name" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter your full name">
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label> <input type="tel" id="credit-phone" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter your phone number">
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Credit Amount (₹)</label> <input type="number" id="credit-amount" required min="10000" max="500000" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter amount (₹10,000 - ₹5,00,000)">
+          <p id="credit-eligibility" class="text-sm mt-2 text-gray-500"></p>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Purpose of Credit</label> <select id="credit-purpose" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"> <option value="">Select purpose</option> <option value="seeds">Purchase Seeds</option> <option value="machinery">Buy/Lease Machinery</option> <option value="fertilizers">Buy Fertilizers</option> <option value="irrigation">Irrigation Setup</option> <option value="storage">Storage Facility</option> <option value="other">Other</option> </select>
+         </div><button type="submit" class="btn-primary w-full py-4 text-white font-bold rounded-xl"> Submit Credit Application </button>
+        </form>
+       </div>
+      </div>
+     </section><!-- Produce Section -->
+     <section id="produce-section" class="section-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+       <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex items-center gap-4 mb-6">
+         <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center"><span class="text-3xl">🌾</span>
+         </div>
+         <div>
+          <h3 class="font-bold text-xl text-gray-800">List Your Produce</h3>
+          <p class="text-sm text-gray-500">Sell directly to mandis</p>
+         </div>
+        </div>
+        <form id="produce-form" class="space-y-6">
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label> <input type="text" id="produce-name" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter your name">
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Your Location</label> <select id="produce-location" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"> <option value="">Select your area</option> <option value="north">North District</option> <option value="south">South District</option> <option value="east">East District</option> <option value="west">West District</option> <option value="central">Central District</option> </select>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Crop Type</label> <select id="produce-crop" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"> <option value="">Select crop</option> <option value="wheat">Wheat</option> <option value="rice">Rice</option> <option value="maize">Maize</option> <option value="cotton">Cotton</option> <option value="sugarcane">Sugarcane</option> <option value="vegetables">Vegetables</option> <option value="fruits">Fruits</option> </select>
+         </div>
+         <div class="grid grid-cols-2 gap-4">
+          <div><label class="block text-sm font-semibold text-gray-700 mb-2">Quantity (Quintals)</label> <input type="number" id="produce-quantity" required min="1" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Qty">
+          </div>
+          <div><label class="block text-sm font-semibold text-gray-700 mb-2">Expected Price (₹/Qt)</label> <input type="number" id="produce-price" required min="100" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Price">
+          </div>
+         </div><button type="submit" class="btn-primary w-full py-4 text-white font-bold rounded-xl"> List Produce for Sale </button>
+        </form>
+       </div>
+       <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h3 class="font-bold text-xl text-gray-800 mb-6">🏛️ Nearest Mandis</h3>
+        <div id="mandi-list" class="space-y-4"><!-- Populated by JS -->
+        </div>
+       </div>
+      </div>
+     </section><!-- Expert Advice Section -->
+     <section id="advice-section" class="section-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+       <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex items-center gap-4 mb-6">
+         <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center"><span class="text-3xl">👨‍🔬</span>
+         </div>
+         <div>
+          <h3 class="font-bold text-xl text-gray-800">Ask an Expert</h3>
+          <p class="text-sm text-gray-500">Get farming advice from experts</p>
+         </div>
+        </div>
+        <form id="advice-form" class="space-y-6">
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label> <input type="text" id="advice-name" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter your name">
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Related Crop</label> <select id="advice-crop" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"> <option value="">Select crop</option> <option value="wheat">Wheat</option> <option value="rice">Rice</option> <option value="maize">Maize</option> <option value="cotton">Cotton</option> <option value="sugarcane">Sugarcane</option> <option value="vegetables">Vegetables</option> <option value="fruits">Fruits</option> <option value="general">General Farming</option> </select>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Your Question</label> <textarea id="advice-query" required rows="4" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none resize-none" placeholder="Describe your farming question or issue in detail..."></textarea>
+         </div><button type="submit" class="btn-primary w-full py-4 text-white font-bold rounded-xl"> Submit Question </button>
+        </form>
+       </div>
+       <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h3 class="font-bold text-xl text-gray-800 mb-6">💡 Quick Tips</h3>
+        <div id="tips-list" class="space-y-4"><!-- Populated by JS -->
+        </div>
+       </div>
+      </div>
+     </section><!-- My Requests Section -->
+     <section id="my-requests-section" class="section-content hidden">
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+       <div class="flex items-center justify-between mb-6">
+        <h3 class="font-bold text-xl text-gray-800">📋 My Submitted Requests</h3><span id="request-count" class="text-sm text-gray-500">0 requests</span>
+       </div>
+       <div id="requests-list" class="space-y-4">
+        <div class="text-center py-12 text-gray-500"><span class="text-4xl mb-4 block">📭</span>
+         <p>No requests submitted yet</p>
+         <p class="text-sm">Start by leasing machinery, applying for credit, or listing your produce</p>
+        </div>
+       </div>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div><!-- Toast Container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Lease Modal -->
+  <div id="lease-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 modal-overlay">
+   <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+    <h3 class="font-bold text-xl text-gray-800 mb-6">📝 Lease Request</h3>
+    <form id="lease-form" class="space-y-4"><input type="hidden" id="lease-machinery-name">
+     <div><label class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label> <input type="text" id="lease-name" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none">
+     </div>
+     <div><label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label> <input type="tel" id="lease-phone" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none">
+     </div>
+     <div><label class="block text-sm font-semibold text-gray-700 mb-2">Number of Days</label> <input type="number" id="lease-days" required min="1" max="30" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="1-30 days">
+     </div>
+     <div id="lease-total" class="text-lg font-bold text-green-600 text-center py-2"></div>
+     <div class="flex gap-4"><button type="button" onclick="closeLeaseModal()" class="flex-1 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-100">Cancel</button> <button type="submit" class="flex-1 btn-primary py-3 text-white font-semibold rounded-xl">Confirm Lease</button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <script>
+        // Configuration
+        const defaultConfig = {
+            platform_title: 'Farmer Connect',
+            welcome_message: 'Welcome to Farmer Connect Ecosystem',
+            background_color: '#f5f5f4',
+            primary_color: '#4a7c23',
+            text_color: '#1f2937',
+            accent_color: '#fbbf24',
+            surface_color: '#ffffff'
+        };
+
+        let config = { ...defaultConfig };
+        let allRecords = [];
+        let currentLeaseRate = 0;
+
+        // Static Data
+        const vendors = [
+            { id: 1, name: 'Krishna Seeds', type: 'seeds', products: 'Wheat, Rice, Maize Seeds', location: 'Main Market, North District', phone: '9876543210', rating: 4.5 },
+            { id: 2, name: 'Shiva Fertilizers', type: 'fertilizers', products: 'Urea, DAP, NPK', location: 'Industrial Area, South District', phone: '9876543211', rating: 4.2 },
+            { id: 3, name: 'Green Shield Pesticides', type: 'pesticides', products: 'Insecticides, Herbicides', location: 'Agri Complex, East District', phone: '9876543212', rating: 4.7 },
+            { id: 4, name: 'Bharat Seeds Co.', type: 'seeds', products: 'Vegetable Seeds, Hybrid Seeds', location: 'Market Road, Central District', phone: '9876543213', rating: 4.3 },
+            { id: 5, name: 'Kisan Fertilizers', type: 'fertilizers', products: 'Organic Fertilizers, Bio Fertilizers', location: 'Village Road, West District', phone: '9876543214', rating: 4.6 },
+            { id: 6, name: 'Pest Control Plus', type: 'pesticides', products: 'Bio Pesticides, Organic Sprays', location: 'New Market, North District', phone: '9876543215', rating: 4.4 }
+        ];
+
+        const machinery = [
+            { id: 1, name: 'John Deere Tractor', type: 'Tractor', hp: '50 HP', rate: 2500, available: true, image: '🚜' },
+            { id: 2, name: 'Mahindra Harvester', type: 'Harvester', hp: '75 HP', rate: 4000, available: true, image: '🌾' },
+            { id: 3, name: 'Rotavator', type: 'Tillage', hp: '45 HP', rate: 1500, available: true, image: '⚙️' },
+            { id: 4, name: 'Seed Drill Machine', type: 'Seeding', hp: '35 HP', rate: 1200, available: false, image: '🌱' },
+            { id: 5, name: 'Sprayer Machine', type: 'Sprayer', hp: '20 HP', rate: 800, available: true, image: '💨' },
+            { id: 6, name: 'Thresher', type: 'Processing', hp: '40 HP', rate: 1800, available: true, image: '🔄' }
+        ];
+
+        const mandis = [
+            { name: 'Central Mandi', location: 'Central District', distance: '5 km', crops: 'All crops', timing: '6 AM - 6 PM' },
+            { name: 'North Grain Market', location: 'North District', distance: '8 km', crops: 'Wheat, Rice, Maize', timing: '7 AM - 5 PM' },
+            { name: 'South Vegetable Mandi', location: 'South District', distance: '12 km', crops: 'Vegetables, Fruits', timing: '5 AM - 2 PM' },
+            { name: 'East Agricultural Market', location: 'East District', distance: '15 km', crops: 'Cotton, Sugarcane', timing: '8 AM - 6 PM' },
+            { name: 'West Farmers Market', location: 'West District', distance: '10 km', crops: 'Mixed produce', timing: '6 AM - 4 PM' }
+        ];
+
+        const expertTips = [
+            { crop: '🌾 Wheat', tip: 'Best sowing time is October-November. Use certified seeds for better yield.' },
+            { crop: '🍚 Rice', tip: 'Maintain 5cm water level during vegetative stage. Apply nitrogen in split doses.' },
+            { crop: '🌽 Maize', tip: 'Plant in rows 60cm apart. Requires good drainage and full sunlight.' },
+            { crop: '🐛 Pest Control', tip: 'Use neem-based pesticides for organic farming. Early morning spraying is most effective.' },
+            { crop: '💧 Irrigation', tip: 'Drip irrigation saves 30-50% water. Schedule watering based on crop stage.' }
+        ];
+
+        // Get current season
+        function getCurrentSeason() {
+            const month = new Date().getMonth();
+            if (month >= 2 && month <= 5) return 'summer';
+            if (month >= 6 && month <= 9) return 'monsoon';
+            return 'winter';
+        }
+
+        // AI Crop Suggestions based on season
+        function getCropSuggestions() {
+            const season = getCurrentSeason();
+            const suggestions = {
+                summer: [
+                    { name: 'Cotton', icon: '🧵', reason: 'High demand, good summer crop' },
+                    { name: 'Groundnut', icon: '🥜', reason: 'Drought tolerant' },
+                    { name: 'Sunflower', icon: '🌻', reason: 'Short duration crop' },
+                    { name: 'Watermelon', icon: '🍉', reason: 'High market price' }
+                ],
+                monsoon: [
+                    { name: 'Rice', icon: '🍚', reason: 'Ideal water conditions' },
+                    { name: 'Maize', icon: '🌽', reason: 'Good rainfall crop' },
+                    { name: 'Soybean', icon: '🫘', reason: 'Nitrogen fixing' },
+                    { name: 'Sugarcane', icon: '🎋', reason: 'Long season crop' }
+                ],
+                winter: [
+                    { name: 'Wheat', icon: '🌾', reason: 'Prime rabi crop' },
+                    { name: 'Mustard', icon: '🌼', reason: 'Cold tolerant' },
+                    { name: 'Potato', icon: '🥔', reason: 'High demand' },
+                    { name: 'Peas', icon: '🫛', reason: 'Quick harvest' }
+                ]
+            };
+            return suggestions[season];
+        }
+
+        // Check credit eligibility
+        function checkCreditEligibility(amount) {
+            if (amount <= 50000) return { eligible: true, message: '✅ Eligible for instant approval', class: 'text-green-600' };
+            if (amount <= 200000) return { eligible: true, message: '✅ Eligible with basic verification', class: 'text-green-600' };
+            if (amount <= 500000) return { eligible: true, message: '⚠️ Requires document verification', class: 'text-amber-600' };
+            return { eligible: false, message: '❌ Amount exceeds maximum limit', class: 'text-red-600' };
+        }
+
+        // Suggest nearest mandi based on location
+        function suggestMandi(location) {
+            const mandiMap = {
+                'north': 'North Grain Market',
+                'south': 'South Vegetable Mandi',
+                'east': 'East Agricultural Market',
+                'west': 'West Farmers Market',
+                'central': 'Central Mandi'
+            };
+            return mandiMap[location] || 'Central Mandi';
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast px-6 py-4 rounded-xl shadow-lg ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-amber-600'} text-white font-semibold`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Show section
+        function showSection(section) {
+            document.querySelectorAll('.section-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`${section}-section`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`[data-section="${section}"]`)?.classList.add('active');
+            
+            const titles = {
+                'dashboard': 'Dashboard',
+                'vendors': 'Vendors & Resources',
+                'machinery': 'Machinery Leasing',
+                'credit': 'Agri Credit',
+                'produce': 'Sell Produce',
+                'advice': 'Expert Advice',
+                'my-requests': 'My Requests'
+            };
+            document.getElementById('section-title').textContent = titles[section] || 'Dashboard';
+        }
+
+        // Filter vendors
+        function filterVendors(type) {
+            document.querySelectorAll('.vendor-filter').forEach(btn => {
+                btn.classList.remove('active', 'bg-green-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.target.classList.add('active', 'bg-green-600', 'text-white');
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            
+            renderVendors(type === 'all' ? vendors : vendors.filter(v => v.type === type));
+        }
+
+        // Render functions
+        function renderCropSuggestions() {
+            const suggestions = getCropSuggestions();
+            const container = document.getElementById('crop-suggestions');
+            container.innerHTML = suggestions.map(crop => `
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                    <div class="text-3xl mb-2">${crop.icon}</div>
+                    <h4 class="font-bold text-gray-800">${crop.name}</h4>
+                    <p class="text-xs text-gray-600">${crop.reason}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderVendors(vendorList = vendors) {
+            const container = document.getElementById('vendors-list');
+            container.innerHTML = vendorList.map(vendor => `
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 ${vendor.type === 'seeds' ? 'bg-green-100' : vendor.type === 'fertilizers' ? 'bg-blue-100' : 'bg-red-100'} rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">${vendor.type === 'seeds' ? '🌱' : vendor.type === 'fertilizers' ? '🧪' : '🐛'}</span>
+                        </div>
+                        <span class="text-sm font-semibold text-amber-600">⭐ ${vendor.rating}</span>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">${vendor.name}</h3>
+                    <p class="text-sm text-gray-600 mb-1">📦 ${vendor.products}</p>
+                    <p class="text-sm text-gray-600 mb-1">📍 ${vendor.location}</p>
+                    <p class="text-sm text-green-600 font-semibold">📞 ${vendor.phone}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderMachinery() {
+            const container = document.getElementById('machinery-list');
+            container.innerHTML = machinery.map(m => `
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg ${!m.available ? 'opacity-60' : ''}">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <span class="text-3xl">${m.image}</span>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full ${m.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${m.available ? '✓ Available' : '✗ Booked'}
+                        </span>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">${m.name}</h3>
+                    <p class="text-sm text-gray-600 mb-1">${m.type} • ${m.hp}</p>
+                    <p class="text-xl font-bold text-green-600 mb-4">₹${m.rate.toLocaleString()}/day</p>
+                    <button 
+                        onclick="openLeaseModal('${m.name}', ${m.rate})" 
+                        ${!m.available ? 'disabled' : ''} 
+                        class="w-full py-3 ${m.available ? 'btn-primary text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'} font-semibold rounded-xl">
+                        ${m.available ? 'Lease Now' : 'Not Available'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderMandis() {
+            const container = document.getElementById('mandi-list');
+            container.innerHTML = mandis.map(m => `
+                <div class="bg-gradient-to-r from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-gray-800">${m.name}</h4>
+                        <span class="text-sm text-amber-700 font-semibold">${m.distance}</span>
+                    </div>
+                    <p class="text-sm text-gray-600">📍 ${m.location}</p>
+                    <p class="text-sm text-gray-600">🌾 ${m.crops}</p>
+                    <p class="text-sm text-gray-600">⏰ ${m.timing}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderTips() {
+            const container = document.getElementById('tips-list');
+            container.innerHTML = expertTips.map(tip => `
+                <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                    <h4 class="font-bold text-gray-800 mb-1">${tip.crop}</h4>
+                    <p class="text-sm text-gray-600">${tip.tip}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderRequests() {
+            const container = document.getElementById('requests-list');
+            const countEl = document.getElementById('request-count');
+            
+            if (allRecords.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <span class="text-4xl mb-4 block">📭</span>
+                        <p>No requests submitted yet</p>
+                        <p class="text-sm">Start by leasing machinery, applying for credit, or listing your produce</p>
+                    </div>
+                `;
+                countEl.textContent = '0 requests';
+                return;
+            }
+            
+            countEl.textContent = `${allRecords.length} request${allRecords.length !== 1 ? 's' : ''}`;
+            
+            container.innerHTML = allRecords.map(record => {
+                const typeConfig = {
+                    'lease': { icon: '🚜', color: 'blue', title: 'Machinery Lease' },
+                    'credit': { icon: '💰', color: 'amber', title: 'Credit Application' },
+                    'produce': { icon: '🌾', color: 'green', title: 'Produce Listing' },
+                    'advice': { icon: '❓', color: 'purple', title: 'Expert Query' }
+                };
+                const cfg = typeConfig[record.type] || { icon: '📋', color: 'gray', title: 'Request' };
+                
+                let details = '';
+                if (record.type === 'lease') {
+                    details = `<p>Machinery: ${record.machinery_name}</p><p>Duration: ${record.lease_days} days</p>`;
+                } else if (record.type === 'credit') {
+                    details = `<p>Amount: ₹${Number(record.credit_amount).toLocaleString()}</p><p>Purpose: ${record.credit_purpose}</p>`;
+                } else if (record.type === 'produce') {
+                    details = `<p>Crop: ${record.crop_name}</p><p>Quantity: ${record.quantity} Qt @ ₹${record.price}/Qt</p>`;
+                } else if (record.type === 'advice') {
+                    details = `<p>Crop: ${record.crop_name}</p><p>Query: ${record.query_text?.substring(0, 50)}...</p>`;
+                }
+                
+                return `
+                    <div class="bg-white rounded-xl p-5 border-l-4 border-${cfg.color}-500 shadow-sm">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-${cfg.color}-100 rounded-lg flex items-center justify-center">
+                                    <span class="text-xl">${cfg.icon}</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">${cfg.title}</h4>
+                                    <p class="text-sm text-gray-500">${record.farmer_name || 'Farmer'}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full ${record.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}">
+                                    ${record.status || 'Pending'}
+                                </span>
+                                <p class="text-xs text-gray-400 mt-1">${new Date(record.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-sm text-gray-600 space-y-1">
+                            ${details}
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="deleteRequest('${record.__backendId}')" class="text-sm text-red-600 hover:text-red-800 font-semibold">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Modal functions
+        function openLeaseModal(name, rate) {
+            document.getElementById('lease-machinery-name').value = name;
+            currentLeaseRate = rate;
+            document.getElementById('lease-days').value = '';
+            document.getElementById('lease-total').textContent = '';
+            document.getElementById('lease-modal').classList.remove('hidden');
+            document.getElementById('lease-modal').classList.add('flex');
+        }
+
+        function closeLeaseModal() {
+            document.getElementById('lease-modal').classList.add('hidden');
+            document.getElementById('lease-modal').classList.remove('flex');
+        }
+
+        // Delete request with inline confirmation
+        let deleteConfirmId = null;
+        async function deleteRequest(id) {
+            const record = allRecords.find(r => r.__backendId === id);
+            if (!record) return;
+            
+            if (deleteConfirmId === id) {
+                const result = await window.dataSdk.delete(record);
+                if (result.isOk) {
+                    showToast('Request deleted successfully');
+                } else {
+                    showToast('Failed to delete request', 'error');
+                }
+                deleteConfirmId = null;
+            } else {
+                deleteConfirmId = id;
+                showToast('Click delete again to confirm', 'warning');
+                setTimeout(() => { deleteConfirmId = null; }, 3000);
+            }
+        }
+
+        // Form handlers
+        document.getElementById('lease-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (allRecords.length >= 999) {
+                showToast('Maximum request limit reached', 'error');
+                return;
+            }
+            
+            const data = {
+                id: Date.now().toString(),
+                type: 'lease',
+                farmer_name: document.getElementById('lease-name').value,
+                farmer_phone: document.getElementById('lease-phone').value,
+                machinery_name: document.getElementById('lease-machinery-name').value,
+                lease_days: parseInt(document.getElementById('lease-days').value),
+                status: 'pending',
+                created_at: new Date().toISOString()
+            };
+            
+            const result = await window.dataSdk.create(data);
+            if (result.isOk) {
+                showToast('Lease request submitted successfully!');
+                closeLeaseModal();
+                e.target.reset();
+            } else {
+                showToast('Failed to submit request', 'error');
+            }
+        });
+
+        document.getElementById('lease-days').addEventListener('input', (e) => {
+            const days = parseInt(e.target.value) || 0;
+            const total = days * currentLeaseRate;
+            document.getElementById('lease-total').textContent = days > 0 ? `Total: ₹${total.toLocaleString()}` : '';
+        });
+
+        document.getElementById('credit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (allRecords.length >= 999) {
+                showToast('Maximum request limit reached', 'error');
+                return;
+            }
+            
+            const data = {
+                id: Date.now().toString(),
+                type: 'credit',
+                farmer_name: document.getElementById('credit-name').value,
+                farmer_phone: document.getElementById('credit-phone').value,
+                credit_amount: parseInt(document.getElementById('credit-amount').value),
+                credit_purpose: document.getElementById('credit-purpose').value,
+                status: 'pending',
+                created_at: new Date().toISOString()
+            };
+            
+            const result = await window.dataSdk.create(data);
+            if (result.isOk) {
+                showToast('Credit application submitted successfully!');
+                e.target.reset();
+                document.getElementById('credit-eligibility').textContent = '';
+            } else {
+                showToast('Failed to submit application', 'error');
+            }
+        });
+
+        document.getElementById('credit-amount').addEventListener('input', (e) => {
+            const amount = parseInt(e.target.value) || 0;
+            const eligibility = checkCreditEligibility(amount);
+            const el = document.getElementById('credit-eligibility');
+            el.textContent = eligibility.message;
+            el.className = `text-sm mt-2 ${eligibility.class}`;
+        });
+
+        document.getElementById('produce-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (allRecords.length >= 999) {
+                showToast('Maximum request limit reached', 'error');
+                return;
+            }
+            
+            const location = document.getElementById('produce-location').value;
+            const suggestedMandi = suggestMandi(location);
+            
+            const data = {
+                id: Date.now().toString(),
+                type: 'produce',
+                farmer_name: document.getElementById('produce-name').value,
+                farmer_location: location,
+                crop_name: document.getElementById('produce-crop').value,
+                quantity: parseInt(document.getElementById('produce-quantity').value),
+                price: parseInt(document.getElementById('produce-price').value),
+                status: 'pending',
+                created_at: new Date().toISOString()
+            };
+            
+            const result = await window.dataSdk.create(data);
+            if (result.isOk) {
+                showToast(`Produce listed! Recommended: ${suggestedMandi}`);
+                e.target.reset();
+            } else {
+                showToast('Failed to list produce', 'error');
+            }
+        });
+
+        document.getElementById('advice-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (allRecords.length >= 999) {
+                showToast('Maximum request limit reached', 'error');
+                return;
+            }
+            
+            const data = {
+                id: Date.now().toString(),
+                type: 'advice',
+                farmer_name: document.getElementById('advice-name').value,
+                crop_name: document.getElementById('advice-crop').value,
+                query_text: document.getElementById('advice-query').value,
+                status: 'pending',
+                created_at: new Date().toISOString()
+            };
+            
+            const result = await window.dataSdk.create(data);
+            if (result.isOk) {
+                showToast('Question submitted! Expert will respond soon.');
+                e.target.reset();
+            } else {
+                showToast('Failed to submit question', 'error');
+            }
+        });
+
+        // Data handler
+        const dataHandler = {
+            onDataChanged(data) {
+                allRecords = data;
+                renderRequests();
+            }
+        };
+
+        // Element SDK handler
+        function onConfigChange(cfg) {
+            config = { ...defaultConfig, ...cfg };
+            
+            document.getElementById('platform-title').textContent = config.platform_title || defaultConfig.platform_title;
+            document.getElementById('welcome-text').textContent = config.welcome_message || defaultConfig.welcome_message;
+            document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+        }
+
+        // Initialize
+        async function init() {
+            // Initialize Element SDK
+            if (window.elementSdk) {
+                window.elementSdk.init({
+                    defaultConfig,
+                    onConfigChange,
+                    mapToCapabilities: (cfg) => ({
+                        recolorables: [
+                            {
+                                get: () => cfg.background_color || defaultConfig.background_color,
+                                set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+                            },
+                            {
+                                get: () => cfg.surface_color || defaultConfig.surface_color,
+                                set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+                            },
+                            {
+                                get: () => cfg.text_color || defaultConfig.text_color,
+                                set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+                            },
+                            {
+                                get: () => cfg.primary_color || defaultConfig.primary_color,
+                                set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+                            },
+                            {
+                                get: () => cfg.accent_color || defaultConfig.accent_color,
+                                set: (v) => { cfg.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
+                            }
+                        ],
+                        borderables: [],
+                        fontEditable: undefined,
+                        fontSizeable: undefined
+                    }),
+                    mapToEditPanelValues: (cfg) => new Map([
+                        ['platform_title', cfg.platform_title || defaultConfig.platform_title],
+                        ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message]
+                    ])
+                });
+            }
+
+            // Initialize Data SDK
+            if (window.dataSdk) {
+                const result = await window.dataSdk.init(dataHandler);
+                if (!result.isOk) {
+                    console.error('Failed to initialize data SDK');
+                }
+            }
+
+            // Render static content
+            renderCropSuggestions();
+            renderVendors();
+            renderMachinery();
+            renderMandis();
+            renderTips();
+            onConfigChange(config);
+        }
+
+        init();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c912bb9d7bc7e69',t:'MTc3MDI4MTUzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
